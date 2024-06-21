@@ -1,6 +1,6 @@
 //TODO: Add world boundaries
 @main
-def computeRoverInstruction(args: String*): Unit = {
+def computeRoverInstruction(args: String*): Rover = {
   val commands = parseAndValidateCommands(args*)
   val initialRover = Rover(0, 0, Direction.N)
 
@@ -14,6 +14,7 @@ def computeRoverInstruction(args: String*): Unit = {
   }
 
   println(finalRover)
+  finalRover
 }
 
 def parseAndValidateCommands(args: String*): Array[Char] = {
