@@ -1,15 +1,38 @@
-//TODO: Add world boundaries
+package Main
+
+import Operations.RoverOperations.{moveForward, turnLeft, turnRight}
+
+/** Represents the direction a Rover can face. */
+enum Direction:
+  case N, S, E, W
+
+/** Represents the state of a Rover with its position and direction. */
+case class Rover(x: Int, y: Int, direction: Direction)
+
+/** Configuration object holding constants related to the Rover's operation. */
+object Config {
+  val maxX: Int = 10
+  val maxY: Int = 10
+  val initialRover: Rover = Rover(0, 0, Direction.N)
+}
+
+/** Computes the final state of the Rover based on a sequence of movement
+  * commands.
+  *
+  * @param args
+  *   The arguments passed to the program.
+  * @return
+  *   The final state of the Rover after executing all commands.
+  */
 @main
 def computeRoverInstruction(args: String*): Rover = {
   val commands = parseAndValidateCommands(args*)
-  val initialRover = Rover(0, 0, Direction.N)
 
-  val finalRover = commands.foldLeft(initialRover) { (rover, command) =>
+  val finalRover = commands.foldLeft(Config.initialRover) { (rover, command) =>
     command match {
-      case 'F' => rover.moveForward
-      case 'L' => rover.turnLeft
-      case 'R' => rover.turnRight
-      case _ => throw new IllegalArgumentException(s"Invalid command: $command")
+      case 'F' => moveForward(rover)
+      case 'L' => turnLeft(rover)
+      case 'R' => turnRight(rover)
     }
   }
 
@@ -17,6 +40,14 @@ def computeRoverInstruction(args: String*): Rover = {
   finalRover
 }
 
+/** Parses and validates the input commands ensuring they are valid before
+  * processing.
+  *
+  * @param args
+  *   A variable number of string arguments representing movement commands.
+  * @return
+  *   An array of characters representing the validated commands.
+  */
 def parseAndValidateCommands(args: String*): Array[Char] = {
   require(args.nonEmpty, "At least one argument must be provided")
   val instructions = args(0)
@@ -26,30 +57,4 @@ def parseAndValidateCommands(args: String*): Array[Char] = {
     "Commands must only include F, L, R characters"
   )
   instructions.toCharArray
-}
-
-enum Direction:
-  case N, S, E, W
-
-case class Rover(x: Int, y: Int, direction: Direction) {
-  def turnRight: Rover = this.copy(direction = direction match {
-    case Direction.N => Direction.E
-    case Direction.E => Direction.S
-    case Direction.S => Direction.W
-    case Direction.W => Direction.N
-  })
-
-  def turnLeft: Rover = this.copy(direction = direction match {
-    case Direction.N => Direction.W
-    case Direction.W => Direction.S
-    case Direction.S => Direction.E
-    case Direction.E => Direction.N
-  })
-
-  def moveForward: Rover = direction match {
-    case Direction.N => this.copy(y = y + 1)
-    case Direction.S => this.copy(y = y - 1)
-    case Direction.E => this.copy(x = x + 1)
-    case Direction.W => this.copy(x = x - 1)
-  }
 }
