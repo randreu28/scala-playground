@@ -33,3 +33,6 @@ metals.sbt
 
 # Logs
 .logs
+
+# Database
+sqlite.db

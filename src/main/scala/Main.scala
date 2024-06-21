@@ -1,5 +1,6 @@
 package Main
 
+import Persistence.DatabaseModule.*
 import Routes.*
 import Utils.Utils.httpLogs
 import Utils.Utils.log
@@ -21,6 +22,8 @@ def main(args: String*): Unit = {
   val route: Route = logRequest(httpLogs) {
     Routes.allRoutes
   }
+
+  initializeDatabase()
 
   val bindingFuture =
     Http()
