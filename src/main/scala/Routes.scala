@@ -1,11 +1,12 @@
-package main
+package Routes
 
-import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.model.ContentTypes
+import akka.http.scaladsl.model.HttpEntity
+import akka.http.scaladsl.server.Directives.*
 import akka.http.scaladsl.server.Route
+
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import akka.http.scaladsl.model.HttpEntity
-import akka.http.scaladsl.model.ContentTypes
 
 object Routes {
   val rootRoute: Route =
