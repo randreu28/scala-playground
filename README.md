@@ -23,7 +23,30 @@ Use [this](https://marketplace.visualstudio.com/items?itemName=scalameta.metals)
 
 You can test and debug inside VsCode if you have the extension. You can also run `sbt test` from the command line.
 
+# Kata: Mars exploration Rover
 
-### Resources
+- **Objective**: Develop an API for remote-controlled vehicles on Mars.
 
-- https://docs.scala-lang.org/getting-started/index.html#using-vscode-with-metals
+- **Initialization**: The rover starts with a position (x,y) and a direction (N,S,E,W).
+
+- **Commands**: The rover receives strings of commands like 'FFLR'.
+
+  - F: Move forward.
+  - L: Turn left.
+  - R: Turn right.
+
+- **Output**: Final location of the vehicle. Example: '2:3:W'.
+
+## Rules and Examples
+
+- If the rover reaches the end of the planet, it wraps around the coordinate axis. There are no negative coordinates.
+
+- Examples for a rover initialized at coordinates 0,0 and oriented towards the north:
+
+  - 'L' => '0:0:W'
+  - 'R' => '0:0:E'
+  - 'F' => '0:1:N'
+  - 'RFF' => '2:0:E'
+  - 'LFF' => '0:8:W'
+  - 'LLFF' => '0:8:S'
+  - 'FRFFR' => '2:1:S'
