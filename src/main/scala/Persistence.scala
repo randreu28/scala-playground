@@ -9,6 +9,7 @@ object DatabaseModule {
   val dbUrl = "jdbc:sqlite:sqlite.db"
 
   def connect(): Connection = {
+    Class.forName("org.sqlite.JDBC")
     DriverManager.getConnection(dbUrl)
   }
 

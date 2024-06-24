@@ -2,8 +2,7 @@ package Main
 
 import Persistence.DatabaseModule.*
 import Routes.*
-import Utils.Utils.httpLogs
-import Utils.Utils.log
+import Utils.Utils.*
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
