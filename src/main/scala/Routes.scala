@@ -1,15 +1,17 @@
 package Routes
 
+import Persistence.DatabaseModule.*
+import Persistence.JsonSupport
 import akka.http.scaladsl.model.ContentTypes
 import akka.http.scaladsl.model.HttpEntity
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.*
 import akka.http.scaladsl.server.Route
-import Persistence.DatabaseModule.*
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-object Routes {
+object Routes extends JsonSupport {
   val rootRoute: Route =
     path("") {
       get {
@@ -29,25 +31,16 @@ object Routes {
     path("users") {
       get {
         val users = getUsers()
-        complete(
-          HttpEntity(
-            ContentTypes.`application/json`,
-            users.toString // TODO: return actual JSON
-          )
-        )
+        complete(users)
       }
     }
 
   val userRoute: Route =
     path("user" / IntNumber) { id =>
-      get {
-        val user = getUserById(id)
-        complete(
-          HttpEntity(
-            ContentTypes.`application/json`,
-            user.toString // TODO: return actual JSON
-          )
-        )
+      val user = getUserById(id)
+      user match {
+        case Some(u) => complete(u)
+        case None    => complete(StatusCodes.NotFound)
       }
     }
 

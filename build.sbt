@@ -1,4 +1,5 @@
 val scala3Version = "3.4.2"
+val AkkaHttpVersion = "10.5.0"
 
 lazy val root = project
   .in(file("."))
@@ -11,8 +12,9 @@ lazy val root = project
     libraryDependencies ++= Seq(
       "org.scalameta" %% "munit" % "1.0.0" % Test,
       "com.typesafe.akka" %% "akka-actor-typed" % "2.8.4",
-      "com.typesafe.akka" %% "akka-http" % "10.5.0",
+      "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
       "com.typesafe.akka" %% "akka-stream" % "2.8.4",
+      "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion,
       "ch.qos.logback" % "logback-classic" % "1.2.11",
       "org.slf4j" % "slf4j-api" % "1.7.36",
       "org.xerial" % "sqlite-jdbc" % "3.36.0.3"
