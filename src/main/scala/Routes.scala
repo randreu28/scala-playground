@@ -1,7 +1,7 @@
 package Routes
 
+import Models.JsonSupport
 import Persistence.DatabaseModule.*
-import Persistence.JsonSupport
 import akka.http.scaladsl.model.ContentTypes
 import akka.http.scaladsl.model.HttpEntity
 import akka.http.scaladsl.model.StatusCodes

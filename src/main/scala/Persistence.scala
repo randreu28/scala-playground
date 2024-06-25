@@ -1,5 +1,6 @@
 package Persistence
 
+import Models.User
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.DefaultJsonProtocol
 import spray.json.RootJsonFormat
@@ -8,14 +9,6 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
 import java.time.LocalDateTime
-
-//TODO: Move models to separate file
-case class User(id: Int, email: String, password: String, createdAt: String)
-
-trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
-  implicit val userFormat: RootJsonFormat[User] = jsonFormat4(User.apply)
-  implicit val usersFormat: RootJsonFormat[List[User]] = listFormat[User]
-}
 
 object DatabaseModule {
   val dbUrl = "jdbc:sqlite:sqlite.db"
