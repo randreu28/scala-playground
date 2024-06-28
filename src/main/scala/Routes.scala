@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 object Routes {
-  val rootRoute: Route =
+  val rootRoute =
     path("") {
       get {
         val currentDate =
@@ -24,7 +24,7 @@ object Routes {
       }
     }
 
-  val helloRoute: Route =
+  val helloRoute =
     path("hello") {
       get {
         complete(
@@ -36,5 +36,5 @@ object Routes {
       }
     }
 
-  val allRoutes: Route = rootRoute ~ helloRoute
+  val allRoutes = rootRoute ~ helloRoute
 }
