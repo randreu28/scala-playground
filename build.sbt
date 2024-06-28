@@ -20,6 +20,7 @@ lazy val root = project
       "io.circe" %% "circe-parser" % circeVersion,
       "io.circe" %% "circe-generic" % circeVersion,
       "org.tpolecat" %% "doobie-core" % "1.0.0-RC4",
-      "org.xerial" % "sqlite-jdbc" % "3.36.0.3"
+      "org.xerial" % "sqlite-jdbc" % "3.36.0.3",
+      "org.mindrot" % "jbcrypt" % "0.4"
     )
   )
