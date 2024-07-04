@@ -3,34 +3,64 @@ package DAOs
 import doobie._
 import doobie.implicits._
 import cats.effect.IO
+import cats.implicits._
 
-case class User(id: Int, name: String, email: String, password: String)
+sealed trait UserBase {
+  def name: String
+  def email: String
+  def password: String
+}
+
+final case class User(
+    id: Int,
+    name: String,
+    email: String,
+    password: String
+) extends UserBase
+
+final case class NewUser(
+    name: String,
+    email: String,
+    password: String
+) extends UserBase
+
+final case class UpdateUser(
+    id: Int,
+    name: Option[String],
+    email: Option[String],
+    password: Option[String]
+)
 
 object UserDAO extends Database {
-
-  // Should the application be in charged of initalizing the db?
-  def createTable: IO[Int] = {
-    sql"""
-      CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY,
-        name TEXT NOT NULL,
-        email TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL
-      )
-    """.update.run.transact(xa)
-  }
-
-  // TODO: Add password hashing
-  // TODO: email and password verification
-  def insert(user: User): IO[Int] = {
-    sql"INSERT INTO users (id, name, email, password) VALUES (${user.id}, ${user.name}, ${user.email}, ${user.password})".update.run
-      .transact(xa)
-  }
-
   def selectById(id: Int): IO[Option[User]] = {
     sql"SELECT * FROM users WHERE id = $id"
       .query[User]
       .option
       .transact(xa)
+  }
+
+  def selectAll: IO[List[User]] = {
+    sql"SELECT * FROM users"
+      .query[User]
+      .to[List]
+      .transact(xa)
+  }
+
+  def insert(newUser: NewUser): IO[Int] = {
+    sql"INSERT INTO users (name, email, password) VALUES (${newUser.name}, ${newUser.email}, ${newUser.password})".update
+      .withUniqueGeneratedKeys[Int]("id")
+      .transact(xa)
+  }
+
+  def update(updateUser: UpdateUser): IO[Int] = {
+    val query = fr"UPDATE users SET" ++
+      updateUser.name.map(name => fr"name = $name").getOrElse(fr"") ++
+      updateUser.email.map(email => fr", email = $email").getOrElse(fr"") ++
+      updateUser.password
+        .map(password => fr", password = $password")
+        .getOrElse(fr"") ++
+      fr"WHERE id = ${updateUser.id}"
+
+    query.update.run.transact(xa)
   }
 }

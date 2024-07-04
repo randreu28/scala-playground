@@ -5,6 +5,7 @@ import cats.effect.IO
 import org.mindrot.jbcrypt.BCrypt
 import DAOs.User
 
+//TODO: Update based on new DAO
 object UserService {
   def validateEmail(email: String): Boolean = {
     email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")
