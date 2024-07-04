@@ -5,8 +5,6 @@ import cats.effect.IO
 import org.mindrot.jbcrypt.BCrypt
 import DAOs.User
 
-//Handle better errors, the functional way
-
 object UserService {
   def validateEmail(email: String): Boolean = {
     email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")
@@ -29,7 +27,6 @@ object UserService {
     UserDAO.selectById(id)
   }
 
-  // get users
-
-  // update user
+  def getUsers: IO[List[User]] = ???
+  def updateUser(id: Int, user: User): IO[Option[User]] = ???
 }

@@ -2,7 +2,6 @@ package Main
 
 import Routes.*
 import Utils.Utils.httpLogs
-import Utils.Utils.log
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
@@ -12,27 +11,26 @@ import akka.http.scaladsl.server.Route
 import scala.io.StdIn
 
 @main
-def main(args: String*): Unit = {
-  val port = if (args.nonEmpty) args(0).toInt else 3000
+def main(args: String*) = {
+  val port = args.headOption.flatMap(_.toIntOption).getOrElse(3000)
 
   implicit val system = ActorSystem(Behaviors.empty, "main")
   implicit val executionContext = system.executionContext
 
-  val route: Route = logRequest(httpLogs) {
-    Routes.allRoutes
-  }
+  val httpServer = Http()
+    .newServerAt("localhost", port)
+    .bind {
+      logRequest(httpLogs) {
+        Routes.allRoutes
+      }
+    }
 
-  val bindingFuture =
-    Http()
-      .newServerAt("localhost", port)
-      .bind(route)
+  println(s"Server running at http://localhost:$port")
+  println("You can check the logs in the .logs directory")
+  println("Press Enter to stop")
+  StdIn.readLine() // Wait for the user to press Enter
 
-  printf(s"Server running at http://localhost:$port\n")
-  printf("You can check the logs in the .logs directory\n")
-  printf("Press Enter to stop\n")
-
-  StdIn.readLine()
-  bindingFuture
+  httpServer
     .flatMap(_.unbind())
     .onComplete(_ => system.terminate())
 }
