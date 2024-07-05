@@ -18,6 +18,7 @@ object Main extends IOApp {
   }
 
   // TODO: Create the actual routes with the services
+  // TODO: Add logging to slf4j
   val httpApp = Router("/" -> helloWorldService).orNotFound
 
   override def run(args: List[String]): IO[ExitCode] = {
