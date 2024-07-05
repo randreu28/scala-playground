@@ -7,7 +7,8 @@ import DAOs.UserDAO
 import cats.effect.IO
 import org.mindrot.jbcrypt.BCrypt
 
-//TODO: Use different throwables type
+case class ApiError(message: String, status: Int) extends Exception(message)
+
 object UserService {
   def createUser(user: NewUser): IO[Int] = {
     for {
@@ -43,8 +44,9 @@ object UserService {
   ): IO[Unit] = {
     if (BCrypt.checkpw(newPassword, prevPassword)) {
       return IO.raiseError(
-        new IllegalArgumentException(
-          "New password must be different from the current one"
+        new ApiError(
+          "New password must be different from the current one",
+          400
         )
       )
     }
@@ -54,7 +56,7 @@ object UserService {
 
   private def validateEmail(email: String): IO[Unit] = {
     if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-      return IO.raiseError(new IllegalArgumentException("Invalid email format"))
+      return IO.raiseError(new ApiError("Invalid email format", 400))
     }
 
     IO.unit
@@ -63,7 +65,7 @@ object UserService {
   private def validateUserExists(userOption: Option[User]): IO[User] = {
     userOption match {
       case Some(u) => IO.pure(u)
-      case None => IO.raiseError(new IllegalArgumentException("User not found"))
+      case None    => IO.raiseError(new ApiError("User not found", 404))
     }
   }
 }
