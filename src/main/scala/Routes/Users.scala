@@ -1,12 +1,22 @@
 package Routes
 
-import org.http4s.HttpRoutes
+import DAOs.NewUser
+import DAOs.UpdateUser
+import DAOs.User
+import Main.Main.logger
+import Services.ApiError
+import Services.UserService
 import cats.effect.IO
-import org.http4s.dsl.io.*
-import org.http4s.circe.CirceEntityEncoder.*
 import io.circe.generic.auto.*
 import io.circe.syntax.*
-import Services.UserService
+import org.http4s.Headers
+import org.http4s.HttpRoutes
+import org.http4s.HttpVersion
+import org.http4s.Response
+import org.http4s.Status
+import org.http4s.circe.CirceEntityDecoder.*
+import org.http4s.circe.CirceEntityEncoder.*
+import org.http4s.dsl.io.*
 
 object Users {
   val routes = HttpRoutes.of[IO] {
@@ -28,5 +38,22 @@ object Users {
           } yield response
         case None => BadRequest("Invalid user ID")
       }
+
+    /** TODO: Error handling is nonexistent. Something goes wrong? Internal
+      * server error(500). Does not even get logged...
+      */
+    case req @ POST -> Root / "users" =>
+      for {
+        newUser <- req.as[NewUser]
+        user <- UserService.createUser(newUser)
+        res <- Ok(user.asJson)
+      } yield res
+
+    case req @ PATCH -> Root / "users" =>
+      for {
+        updatedUser <- req.as[UpdateUser]
+        user <- UserService.updateUser(updatedUser)
+        res <- Ok(user.asJson)
+      } yield res
   }
 }
