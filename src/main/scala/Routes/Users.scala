@@ -23,19 +23,19 @@ object Users {
     case GET -> Root / "users" =>
       for {
         users <- UserService.getUsers()
-        response <- Ok(users.asJson)
-      } yield response
+        res <- Ok(users.asJson)
+      } yield res
 
     case GET -> Root / "users" / id =>
       id.toIntOption match {
         case Some(validId) =>
           for {
             user <- UserService.getUserById(validId)
-            response <- user match {
+            res <- user match {
               case Some(user) => Ok(user.asJson)
               case None       => NotFound(s"User with id $validId not found")
             }
-          } yield response
+          } yield res
         case None => BadRequest("Invalid user ID")
       }
 
