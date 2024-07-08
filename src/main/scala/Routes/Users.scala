@@ -39,21 +39,33 @@ object Users {
         case None => BadRequest("Invalid user ID")
       }
 
-    /** TODO: Error handling is nonexistent. Something goes wrong? Internal
-      * server error(500). Does not even get logged...
-      */
     case req @ POST -> Root / "users" =>
-      for {
-        newUser <- req.as[NewUser]
-        user <- UserService.createUser(newUser)
-        res <- Ok(user.asJson)
-      } yield res
+      req.as[NewUser].attempt.flatMap {
+        case Right(newUser) =>
+          UserService.createUser(newUser).attempt.flatMap {
+            case Right(user)           => Ok(user.asJson)
+            case Left(error: ApiError) => toErrorResponse(error)
+            // Type system is not smart enough to figure out there cannot be any other error than ApiError
+            case _ => InternalServerError("Unknown error")
+          }
+        case Left(_) => BadRequest("Invalid JSON for NewUser")
+      }
 
     case req @ PATCH -> Root / "users" =>
-      for {
-        updatedUser <- req.as[UpdateUser]
-        user <- UserService.updateUser(updatedUser)
-        res <- Ok(user.asJson)
-      } yield res
+      req.as[UpdateUser].attempt.flatMap {
+        case Right(updatedUser) =>
+          UserService.updateUser(updatedUser).attempt.flatMap {
+            case Right(user)           => Ok(user.asJson)
+            case Left(error: ApiError) => toErrorResponse(error)
+            case _                     => InternalServerError("Unknown error")
+          }
+        case Left(_) => BadRequest("Invalid JSON for UpdateUser")
+      }
+  }
+
+  private def toErrorResponse(error: ApiError): IO[Response[IO]] = {
+    IO[Response[IO]](
+      Response[IO](Status(error.status)).withEntity(error.message)
+    )
   }
 }
