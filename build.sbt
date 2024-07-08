@@ -5,8 +5,11 @@ lazy val root = project
   .settings(
     name := "scala-playground",
     version := "0.1.0-SNAPSHOT",
-
     scalaVersion := scala3Version,
-
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test
+    libraryDependencies ++= Seq(
+      "org.scalameta" %% "munit" % "1.0.0" % Test,
+      "dev.zio" %% "zio" % "2.1.5",
+      "dev.zio" %% "zio-streams" % "2.1.5",
+      "dev.zio" %% "zio-http" % "3.0.0-RC9"
+    )
   )
