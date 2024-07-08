@@ -7,20 +7,15 @@ import org.http4s.dsl.io.*
 import org.http4s.ember.server.EmberServerBuilder
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.Logger
+import Routes.Users
 
 object Main extends IOApp {
   implicit val logger: Logger[IO] = Slf4jLogger.getLogger[IO]
 
-  // TODO: Create the actual routes with the services
-  val helloWorldService = HttpRoutes.of[IO] {
-    case GET -> Root / "hello"        => Ok("Hello, World!")
-    case GET -> Root / "hello" / name => Ok(s"Hello, $name!")
-  }
-
-  val httpApp = Utils.Logger(helloWorldService.orNotFound)
+  val httpApp = Utils.Logger(Users.routes.orNotFound)
 
   override def run(args: List[String]): IO[ExitCode] = {
-    val port = args.headOption.map(_.toInt).getOrElse(3000)
+    val port = args.headOption.flatMap(_.toIntOption).getOrElse(3000)
     EmberServerBuilder
       .default[IO]
       .withHost(Host.fromString("localhost").get)
