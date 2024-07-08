@@ -1,12 +1,15 @@
 import zio._
-import zio.Console._
+import zio.http._
 
-object MyApp extends ZIOAppDefault {
-  def run = {
-    for {
-      _ <- printLine("Hello! What is your name?")
-      name <- readLine
-      _ <- printLine(s"Hello, ${name}, welcome to ZIO!")
-    } yield ()
-  }
+object Main extends ZIOAppDefault {
+  val routes =
+    Routes(
+      Method.GET / Root -> handler(Response.text("Hello world")),
+      Method.GET / "users" / int("id") ->
+        handler { (id: Int, req: Request) =>
+          Response.text(s"Requested User ID: $id")
+        }
+    )
+
+  def run = Server.serve(routes).provide(Server.defaultWithPort(3000))
 }
