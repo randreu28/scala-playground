@@ -10,6 +10,8 @@ lazy val root = project
       "org.scalameta" %% "munit" % "1.0.0" % Test,
       "dev.zio" %% "zio" % "2.1.5",
       "dev.zio" %% "zio-streams" % "2.1.5",
-      "dev.zio" %% "zio-http" % "3.0.0-RC9"
+      "dev.zio" %% "zio-http" % "3.0.0-RC9",
+      "io.getquill" %% "quill-jdbc-zio" % "4.8.4",
+      "org.xerial" % "sqlite-jdbc" % "3.28.0"
     )
   )
