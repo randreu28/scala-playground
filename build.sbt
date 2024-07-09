@@ -13,6 +13,7 @@ lazy val root = project
       "dev.zio" %% "zio-http" % "3.0.0-RC9",
       "io.getquill" %% "quill-jdbc-zio" % "4.8.4",
       "org.xerial" % "sqlite-jdbc" % "3.28.0",
-      "org.mindrot" % "jbcrypt" % "0.4"
+      "org.mindrot" % "jbcrypt" % "0.4",
+      "dev.zio" %% "zio-json" % "0.7.1"
     )
   )
