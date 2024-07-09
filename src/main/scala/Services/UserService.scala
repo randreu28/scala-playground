@@ -12,8 +12,9 @@ import java.sql.SQLException
 case class ApiError(message: String, statusCode: Int)
 
 object UserService {
-  def getUserById = UserDAO.selectById
-  def getUsers = UserDAO.selectAll
+  def getUserById(id: Int) =
+    UserDAO.selectById(id).mapError(handleSqlException)
+  def getUsers = UserDAO.selectAll.mapError(handleSqlException)
 
   def createUser(user: NewUser): ZIO[javax.sql.DataSource, ApiError, Int] = {
     for {
@@ -30,7 +31,7 @@ object UserService {
       updateUser: UpdateUser
   ): ZIO[javax.sql.DataSource, ApiError, Long] = {
     for {
-      userOption <- getUserById(updateUser.id).mapError(handleSqlException)
+      userOption <- getUserById(updateUser.id)
       prevUser <- getUserOrFail(userOption)
       _ <- validateEmail(prevUser.email)
       _ <- validateNewPassword(prevUser.password, updateUser.password)
@@ -85,6 +86,6 @@ object UserService {
   private def handleSqlException(e: SQLException): ApiError = e match {
     case sqlEx: java.sql.SQLException if sqlEx.getSQLState == "23505" =>
       new ApiError("Email already exists", 400)
-    case _ => ApiError(e.getMessage, 500)
+    case _ => ApiError(s"Database error : $e", 500)
   }
 }
